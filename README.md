@@ -8,6 +8,12 @@ This project analyzes the UCI Heart Disease dataset to build machine learning mo
 
 ## Table of Contents
 
+This table of contents serves as a roadmap for our analytical journey, chronicling the lifecycle of our project from raw information to actionable insights. It outlines the narrative of how we transformed a complex dataset into a robust predictive tool through the following key chapters:
+1. Developing the Model: We begin by detailing the architectural blueprint of our solution. This section explores the selection of specific algorithms, the engineering of features designed to capture subtle patterns, and the iterative process of tuning parameters to align the model’s logic with our core objectives.
+2. Cleaning the Data: Before the heavy lifting begins, we must refine our raw materials. This stage tells the story of our rigorous preprocessing efforts—identifying and correcting anomalies, handling missing values with surgical precision, and ensuring the dataset is polished and consistent for optimal performance.
+3. Evaluating Using Cross-Validation: To ensure our findings aren’t just a product of chance, we subject the model to a gauntlet of rigorous testing. By implementing k-fold cross-validation, we simulate real-world variety, checking for stability and making sure our model generalizes well to unseen data rather than simply memorizing the training set.
+4. Result Summary: Our journey concludes with a synthesis of the evidence. This final chapter translates technical metrics into a clear narrative of success, highlighting key performance indicators, visualizing the impact of our findings, and providing a definitive look at what the data ultimately revealed.
+
 1. [Dataset Description](#dataset-description)
 2. [Data Preprocessing](#data-preprocessing)
 3. [Exploratory Data Analysis](#exploratory-data-analysis)
