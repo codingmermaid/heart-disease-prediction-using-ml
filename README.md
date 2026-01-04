@@ -2,8 +2,14 @@
 
 ## Project Overview
 
-This project analyzes the UCI Heart Disease dataset to build machine learning models that predict the presence of heart disease in patients. The analysis includes comprehensive data exploration, preprocessing, feature engineering, and comparison of two classification models: Logistic Regression and XGBoost.
+This project centers on the critical challenge of cardiovascular diagnostics by leveraging the UCI Heart Disease dataset to develop predictive machine learning architectures. The initiative was born out of a pressing need to address several systemic issues currently plaguing traditional diagnostic workflows in clinical settings.
 
+Historically, the identification of heart disease has suffered from significant hurdles:
+• Diagnostic Latency and Human Error: Conventional diagnostic processes often rely on manual reviews of complex medical histories and fragmented lab results. This subjective approach is not only time-consuming but also prone to human fatigue and oversight, which can lead to misdiagnosis or delayed treatment.
+• The Burden of High-Dimensional Data: Modern medicine generates vast amounts of patient data—including physiological metrics, lifestyle factors, and biochemical markers. Clinicians often struggle to synthesize these disparate data points simultaneously to identify subtle, non-linear correlations that indicate early-stage heart disease.
+• Resource Inefficiency: In many healthcare systems, specialized cardiac screenings are expensive and localized. There was a clear demand for a preliminary, automated screening tool that could accurately triage patients, ensuring that high-risk individuals receive immediate specialist attention while reducing unnecessary procedures for low-risk cases.
+
+To bridge these gaps, this project moves beyond simple data processing to provide a rigorous analytical framework. The workflow begins with comprehensive data exploration to uncover hidden patterns and meticulous preprocessing to ensure data integrity. Through feature engineering, we isolate the most predictive biological indicators, transforming raw data into actionable insights. Finally, the project conducts a high-stakes comparison between Logistic Regression—selected for its interpretability and baseline reliability—and XGBoost, chosen for its ability to handle complex, non-linear relationships through gradient boosting. By evaluating these models, the project aims to deliver a robust, data-driven solution that enhances clinical decision-making and improves patient outcomes.
 ---
 
 ## Table of Contents
