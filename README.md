@@ -90,13 +90,14 @@ The dataset contained missing values in several columns:
 
 ### 2. Missing Value Imputation Strategy
 
-- **Numerical columns** (trestbps, chol, thalch, oldpeak, ca): Imputed with **median** values
-  - Median is robust to outliers, making it preferable over mean for skewed distributions
+Imputation happens **inside the model pipeline, after the train/test split**, so the medians and modes are learned from training data only. Filling values on the full dataset first would let test-set statistics leak into training.
 
-- **Categorical columns** (fbs, restecg, exang, slope, thal): Imputed with **mode** (most frequent value)
+- **Numerical columns** (trestbps, chol, thalch, oldpeak, ca, hr_reserve): imputed with the training **median**, plus a missing-value flag
+- **Categorical columns** (restecg, slope, thal) and binary columns (fbs, exang): imputed with the training **mode**, plus a missing-value flag
+- Zero values in trestbps and chol are treated as missing, since they are not physically possible
 
 ### 3. Duplicate Handling
-- Checked for duplicate rows: **0 duplicates found**
+- Duplicates are checked while ignoring the `id` column, which is unique for every row. Comparing full rows would never find a repeated patient.
 
 ### 4. Data Type Conversions
 - Boolean columns (fbs, exang) converted to binary integers (0/1)
@@ -324,38 +325,49 @@ Based on feature importance analysis, the most predictive features for heart dis
 
 ## Technical Requirements
 
-### Dependencies
-
-```
-numpy>=1.21.0
-pandas>=1.3.0
-matplotlib>=3.4.0
-seaborn>=0.11.0
-scikit-learn>=0.24.0
-xgboost>=1.4.0
-```
-
 ### Installation
 
 ```bash
-pip install numpy pandas matplotlib seaborn scikit-learn xgboost
+pip install -r requirements.txt
 ```
+
+Download `heart_disease_uci.csv` from the [UCI Heart Disease dataset on Kaggle](https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data) and place it in the project root. The file is not committed to the repo.
 
 ### File Structure
 
 ```
-Claude-project/
-├── heart_disease_uci.csv          # Raw dataset
-├── heart-disease.ipynb            # Jupyter notebook with analysis
-└── Heart_Disease_Project_Documentation.md  # This documentation
+heart-disease-prediction-using-ml/
+├── heart-disease.ipynb            # EDA and model walkthrough
+├── src/heart_disease/
+│   ├── data.py                    # loading and row-level cleaning
+│   ├── features.py                # clinical feature engineering
+│   ├── pipeline.py                # leak-free preprocessing + model pipelines
+│   └── train.py                   # command-line training and evaluation
+├── tests/                         # pytest suite (runs on synthetic data)
+├── requirements.txt
+└── pyproject.toml
 ```
 
 ### How to Run
 
-1. Ensure all dependencies are installed
-2. Open `heart-disease.ipynb` in Jupyter Notebook/Lab
-3. Run all cells sequentially (Kernel → Restart & Run All)
-4. Results and visualizations will be generated inline
+Notebook:
+
+1. Install the requirements and place the CSV in the project root
+2. Open `heart-disease.ipynb` and run all cells (Kernel → Restart & Run All)
+
+Command line:
+
+```bash
+PYTHONPATH=src python -m heart_disease.train --data heart_disease_uci.csv --models logreg xgboost
+```
+
+Tests:
+
+```bash
+pytest
+```
+
+> **Note:** the metrics reported above were produced before preprocessing was moved after the train/test split. Re-run the notebook to get leak-free numbers; they may be slightly lower.
 
 ---
 
