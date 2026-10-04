@@ -45,7 +45,8 @@ def build_preprocessor() -> Pipeline:
     )
     # Flags for missing categories are added separately, so they are not
     # one-hot encoded into redundant True/False column pairs.
-    categorical_missing = MissingIndicator(features="missing-only")
+    # Include every category to handle missing values first seen at evaluation.
+    categorical_missing = MissingIndicator(features="all")
 
     columns = ColumnTransformer(
         [

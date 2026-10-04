@@ -11,6 +11,24 @@ def test_duplicates_are_found_even_with_unique_ids(raw_df):
     assert len(drop_duplicate_patients(raw_df)) == len(raw_df) - 1
 
 
+@pytest.mark.parametrize("column", ["chol", "trestbps", "fbs", "exang"])
+def test_clean_deduplicates_normalized_patients(raw_df, column):
+    patients = pd.concat([raw_df.iloc[[0]]] * 2, ignore_index=True)
+    patients["id"] = [1, 2]
+    patients[column] = [0, np.nan] if column in ["chol", "trestbps"] else [True, "TRUE"]
+    original = patients.copy(deep=True)
+
+    cleaned = clean(patients)
+
+    assert len(cleaned) == 1
+    assert cleaned["id"].tolist() == [1]
+    if column in ["chol", "trestbps"]:
+        assert pd.isna(cleaned.loc[0, column])
+    else:
+        assert cleaned.loc[0, column] == 1.0
+    pd.testing.assert_frame_equal(patients, original)
+
+
 def test_zero_blood_pressure_and_cholesterol_become_missing(raw_df):
     cleaned = clean(raw_df)
     assert (cleaned["chol"] == 0).sum() == 0

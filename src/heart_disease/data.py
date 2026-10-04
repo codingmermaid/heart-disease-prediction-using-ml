@@ -62,12 +62,12 @@ def drop_duplicate_patients(df: pd.DataFrame) -> pd.DataFrame:
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Apply row-level cleaning that does not learn anything from the data.
 
-    * removes duplicate patient records (ignoring ``id``)
     * turns impossible zero values into missing values
     * encodes ``sex``, ``fbs`` and ``exang`` as 1.0 / 0.0, keeping NaN
     * builds the binary target from ``num`` (0 = no disease, 1-4 = disease)
+    * removes duplicate patient records after normalization (ignoring ``id``)
     """
-    df = drop_duplicate_patients(df.copy())
+    df = df.copy()
 
     for col in ZERO_MEANS_MISSING:
         df.loc[df[col] == 0, col] = np.nan
@@ -77,7 +77,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
         df[col] = _to_binary(df[col])
 
     df[TARGET] = (df["num"] > 0).astype(int)
-    return df
+    return drop_duplicate_patients(df)
 
 
 def split_features_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:

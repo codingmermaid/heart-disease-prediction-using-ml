@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 from heart_disease.data import clean, split_features_target
 from heart_disease.features import add_clinical_features
-from heart_disease.pipeline import MODEL_NAMES, NUMERIC_COLUMNS, build_model, build_preprocessor, feature_names
+from heart_disease.pipeline import CATEGORICAL_COLUMNS, MODEL_NAMES, NUMERIC_COLUMNS, build_model, build_preprocessor, feature_names
 from heart_disease.train import cross_validate_model, evaluate
 
 
@@ -41,6 +41,30 @@ def test_missing_indicators_are_created(splits):
     names = feature_names(model)
     for col in ["ca", "thal", "slope"]:
         assert any("missingindicator" in n and n.endswith(col) for n in names), col
+
+
+@pytest.mark.parametrize("column", CATEGORICAL_COLUMNS)
+def test_categorical_missing_only_in_evaluation(splits, column):
+    X_train, X_test, y_train, _ = splits
+    X_train = X_train.copy()
+    X_train[CATEGORICAL_COLUMNS] = X_train[CATEGORICAL_COLUMNS].fillna(
+        X_train[CATEGORICAL_COLUMNS].mode().iloc[0]
+    )
+    X_test = X_test.head(2).copy()
+    X_test[column] = [np.nan, X_train[column].iloc[0]]
+
+    pre = build_preprocessor().fit(X_train, y_train)
+    train_values = pre.transform(X_train)
+    test_values = pre.transform(X_test)
+    names = list(pre.named_steps["columns"].get_feature_names_out())
+
+    assert train_values.shape[1] == test_values.shape[1] == len(names)
+    assert not np.isnan(test_values).any()
+    for category in CATEGORICAL_COLUMNS:
+        index = names.index(f"categorical_missing__missingindicator_{category}")
+        assert (train_values[:, index] == 0).all()
+    index = names.index(f"categorical_missing__missingindicator_{column}")
+    np.testing.assert_array_equal(test_values[:, index], [1, 0])
 
 
 def test_unseen_category_does_not_crash(splits):
